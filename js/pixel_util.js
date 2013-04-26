@@ -5,7 +5,6 @@
 var PixelUtil = (function() {
 	/**
 	 * constructor
-	 * @param String url   The url of image
 	 */
 	var PixelImage = function(url, byteData) {
 		this.url = url;
@@ -14,10 +13,16 @@ var PixelUtil = (function() {
 		this.colorDepth = 0;
 	};
 	
+	/**
+	 * Return the byte size of image.
+	 */
 	PixelImage.prototype.getFileSize = function() {
 		return this.byteData.length;
 	};
 
+	/**
+	 * Return true when image is png otherwise false.
+	 */
 	PixelImage.prototype.isPng = function() {
 		var src = this.byteData;
 		return (src.length > 24)
@@ -25,11 +30,17 @@ var PixelUtil = (function() {
 			&& src[4]===0x0D && src[5]===0x0A && src[6]===0x1A && src[7]===0x0A;
 	};
 
+	/**
+	 * Return true when image is git otherwise false.
+	 */
 	PixelImage.prototype.isGif = function() {
 		var src = this.byteData;
 		return src.length > 22 && src[0]===0x47 && src[1]===0x49 && src[2]===0x46;
 	};
 
+	/**
+	 * Get the width of image.
+	 */
 	PixelImage.prototype.getWidth = function() {
 		var src = this.byteData;
 		var width = 0;
@@ -45,6 +56,9 @@ var PixelUtil = (function() {
 		return width;
 	};
 
+	/**
+	 * Get the height of image.
+	 */
 	PixelImage.prototype.getHeight = function() {
 		var src = this.byteData;
 		var height = 0;
@@ -153,6 +167,9 @@ var PixelUtil = (function() {
 		return getPaletteFromSource(src, colorDepth, offset);
 	};
 
+	/**
+	 * Get the palette array of image.
+	 */
 	PixelImage.prototype.getPalette = function() {
 		// momerize
 		if (this.palette !== null) {
@@ -166,7 +183,6 @@ var PixelUtil = (function() {
 		throw "File is not PNG or GIF.: " + this.url;
 	};
 
-
 	var PixelUtil = {};
 	/**
 	 * convert text to byte array.
@@ -179,8 +195,11 @@ var PixelUtil = (function() {
 		return byteArray;
 	};
 	/**
-	 * load image bytes.
-	 * @param function callback   The function called after load.
+	 * load image and get informations of image.
+	 * @param String url The url of image.
+	 * @param function callback
+	 *      The function called after load.
+	 *      It's first argument is object contains informations of image. 
 	 */
 	PixelUtil.load = function(url, callback) {
 		var request = new XMLHttpRequest();
@@ -188,10 +207,21 @@ var PixelUtil = (function() {
 		request.overrideMimeType('text\/plain; charset=x-user-defined');
 		request.onload = function() {
 			if (request.status != 200) {
-				throw "Can't load image: " + url;
+				throw "Couldn't load image: " + url;
 			}
 			var byteData = textToByteArray(request.responseText);
-			callback && callback(new PixelImage(url, byteData));
+			var img = new PixelImage(url, byteData);
+			// call callback with informations of image.
+			callback({
+				url: url,
+				fileSize:   img.getFileSize(),
+				width:      img.getWidth(),
+				height:     img.getHeight(),
+				isGif:      img.isGif(),
+				isPng:      img.isPng(),
+				palette:    img.getPalette(),
+				colorDepth: img.colorDepth
+			});
 		};
 		request.send(null);
 	};
