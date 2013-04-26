@@ -111,10 +111,10 @@ var PixelUtil = (function() {
 		if (src[25] === 3) {
 			// seek a chank of 'PLTE'
 			while (offset < src.length) {
-				if (src[offset+4] === 0x50)    // P
-				&& (src[offset+5] === 0x4C)    // L
-				&& (src[offset+6] === 0x54)    // T
-				&& (src[offset+7] === 0x45)) { // E
+				if ((src[offset+4] === 0x50)    // P
+				 && (src[offset+5] === 0x4C)    // L
+				 && (src[offset+6] === 0x54)    // T
+				 && (src[offset+7] === 0x45)) { // E
 					offset += 8;
 					break;
 				}
