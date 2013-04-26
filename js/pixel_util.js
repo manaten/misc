@@ -184,6 +184,15 @@ var PixelUtil = (function() {
 	};
 
 	var PixelUtil = {};
+	var getXmlHttpObject = function() {
+		var xhr;
+		if (XMLHttpRequest) {
+			xhr = new XMLHttpRequest();
+		} else {
+			xhr = new ActiveXObject('MSXML2.XMLHTTP.6.0');
+		}
+		return xhr;
+	};
 	/**
 	 * convert text to byte array.
 	 */
@@ -202,7 +211,7 @@ var PixelUtil = (function() {
 	 *      It's first argument is object contains informations of image. 
 	 */
 	PixelUtil.load = function(url, callback) {
-		var request = new XMLHttpRequest();
+		var request = getXmlHttpObject();
 		request.open('GET', url, true);
 		request.overrideMimeType('text\/plain; charset=x-user-defined');
 		request.onload = function() {
