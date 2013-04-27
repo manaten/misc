@@ -75,7 +75,7 @@ var PixelUtil = (function() {
 	};
 
 	var toHexString = function(num) {
-		return (num < 10 ? "0" : "") + num.toString(16);
+		return (num < 0x10 ? "0" : "") + num.toString(16);
 	};
 
 	var getPaletteFromSource = function(src, colorDepth, offset) {
