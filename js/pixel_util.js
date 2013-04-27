@@ -79,7 +79,7 @@ var PixelUtil = (function() {
 	};
 
 	var getPaletteFromSource = function(src, colorDepth, offset) {
-		var size = colorDepth * colorDepth;
+		var size = Math.pow(2, colorDepth);
 		if (offset + size * 3 > src.length) {
 			throw "Illigal image file.: " + this.url;
 		}
