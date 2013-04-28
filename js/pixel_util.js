@@ -226,7 +226,7 @@ var PixelUtil = (function() {
 				.append($colorDiv)
 				.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" })
 				.hide()
-				.hover(null, function(ev) { $(ev.target).is('.pixelTip') && $tip.hide(); } )
+				.hover(null, function(ev) { $tip.hide(); } )
 				.appendTo(document.body);
 			$img.mouseover(function() { $tip.show(); } );
 
