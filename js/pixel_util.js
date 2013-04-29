@@ -209,13 +209,14 @@ var PixelUtil = (function() {
 
 		var createTip = function(x, y) {
 			var that = this;
+			var $tip = $("<div class='pixelTip'></div>")
+				.css({ position:"absolute" })
+				.hide()
+				.hover(null, function() { that.hide(); } )
+				.appendTo(document.body);
+			that.$tip = $tip;
+
 			PixelUtil.load(that.url, function(imgInfo) {
-				var $tip = $("<div class='pixelTip'></div>")
-					.css({ position:"absolute" })
-					.hide()
-					.hover(null, function() { that.hide(); } )
-					.appendTo(document.body);
-				
 				var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
 				$('<button class="zoomIn" type="button">zoomIn</button>')
 					.click( function() { zoomIn.apply(that) } ).appendTo($controll);
@@ -236,7 +237,6 @@ var PixelUtil = (function() {
 						"<span class='depth'>" + imgInfo.colorDepth + "</span></div>"));
 				appendPaletteTable.apply(that, [$tip, imgInfo.palette]);
 
-				that.$tip = $tip;
 				that.$img = $img;
 				that.baseWidth  = $img.attr("width")  || imgInfo.width;
 				that.baseHeight = $img.attr("height") || imgInfo.height;
@@ -310,7 +310,6 @@ var PixelUtil = (function() {
 		PixelTip.prototype.hide = function() {
 			this.visible = false;
 			this.$tip && this.$tip.show().hide();
-			console.log(this.url);
 		};
 		return PixelTip;
 	}();
