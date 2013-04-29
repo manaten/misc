@@ -248,7 +248,10 @@ var PixelUtil = (function() {
 				for (var x = 0; x < 16; x++) {
 					var offset = x + y * 16;
 					(function() {
-						var color = (offset >= palette.length) ? "#000000" : "#" + palette[offset];
+						if (offset >= palette.length) {
+							return;
+						}
+						var color = "#" + palette[offset];
 						$("<td></td>")
 							.css({ "background-color":color })
 							.mouseover(function() { $colorDiv.text(color).css({ "border-color":color }); })
@@ -256,7 +259,7 @@ var PixelUtil = (function() {
 							.appendTo($tr);
 					})();
 				}
-				$table.append($tr);
+				$tr.size() && $table.append($tr);
 			}
 			return $table;
 		};
