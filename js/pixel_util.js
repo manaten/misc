@@ -221,11 +221,11 @@ var PixelUtil = (function() {
 
 			PixelUtil.load(that.url, function(imgInfo) {
 				var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
-				$('<button class="zoomIn" type="button">zoomIn</button>')
+				$('<button class="zoomIn" type="button">+</button>')
 					.click( function() { zoomIn.apply(that) } ).appendTo($controll);
-				$('<button class="zoomOut" type="button">zoomOut</button>')
+				$('<button class="zoomOut" type="button">-</button>')
 					.click( function() { zoomOut.apply(that) } ).appendTo($controll);
-				$('<button class="bgColor" type="button">bgColor</button>')
+				$('<button class="bgColor" type="button">[ ]</button>')
 					.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
 
 
