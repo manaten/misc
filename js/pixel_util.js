@@ -200,8 +200,8 @@ var PixelUtil = (function() {
 	 * A tip class
 	 */
 	var PixelTip =  function() {
-		var PixelTip = function($img) {
-			this.url = $img.attr("src");
+		var PixelTip = function(url) {
+			this.url = url;
 			this.bgcolor = 0;
 			this.zoomLevel = 1;
 			this.visible = false;
@@ -214,7 +214,10 @@ var PixelUtil = (function() {
 				.hide()
 				.hover(null, function() { that.hide(); } )
 				.appendTo(document.body);
+			var $img = $("<img src='" + that.url + "'>")
+				.css({ "background-color": bgcolors[0] });
 			that.$tip = $tip;
+			that.$img = $img;
 
 			PixelUtil.load(that.url, function(imgInfo) {
 				var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
@@ -225,8 +228,6 @@ var PixelUtil = (function() {
 				$('<button class="bgColor" type="button">bgColor</button>')
 					.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
 
-				var $img = $("<img src='" + that.url + "'>")
-					.css({ "background-color": bgcolors[0] });
 
 				$tip.append($controll)
 					.append($('<div class="container"></div>').append($img))
@@ -237,7 +238,6 @@ var PixelUtil = (function() {
 						"<span class='depth'>" + imgInfo.colorDepth + "</span></div>"));
 				appendPaletteTable.apply(that, [$tip, imgInfo.palette]);
 
-				that.$img = $img;
 				that.baseWidth  = $img.attr("width")  || imgInfo.width;
 				that.baseHeight = $img.attr("height") || imgInfo.height;
 				that.visible && that.show(x, y);
@@ -356,8 +356,8 @@ var PixelUtil = (function() {
 	 * When mouce hover to image, show a tip of image.
 	 * this method can't work without jQuery
 	 */
-	PixelUtil.createTip = function($img) {
-		return new PixelTip($img);
+	PixelUtil.createTip = function(url) {
+		return new PixelTip(url);
 	};
 
 	return PixelUtil;
