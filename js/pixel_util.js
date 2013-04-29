@@ -212,8 +212,7 @@ var PixelUtil = (function() {
 				.appendTo($controll)
 				.click( function() { changeBGColor.apply(that) } );
 
-			var $colorDiv = $('<div class="color">hover to palette</div>');
-			var pos = $img.offset();
+			var $colorDiv = $('<div class="color">#000000</div>');
 			var $tip = $("<div class='pixelTip'></div>")
 				.append($controll)
 				.append($('<div class="container"></div>').append(this.$img))
@@ -224,12 +223,14 @@ var PixelUtil = (function() {
 					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>")
 				.append( createPaletteTable(imgInfo.palette, $colorDiv) )
 				.append($colorDiv)
-				.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" })
 				.hide()
-				.hover(null, function(ev) { $tip.hide(); } )
+				.hover(null, function() { $tip.hide(); } )
+				.mouseleave(function() { $tip.hide(); } )
 				.appendTo(document.body);
-			$img.mouseover(function() { $tip.show(); } );
-
+			$img.mouseover(function() {
+				var pos = $img.offset();
+				$tip.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" }).show();
+			} );
 		};
 
 		var createPaletteTable = function(palette, $colorDiv) {
@@ -242,7 +243,7 @@ var PixelUtil = (function() {
 						var color = (offset >= palette.length) ? "#000000" : "#" + palette[offset];
 						$("<td></td>")
 							.css({ "background-color":color })
-							.mouseover(function() { $colorDiv.text(color); })
+							.mouseover(function() { $colorDiv.text(color).css({ "border-color":color }); })
 							.appendTo($tr);
 					})();
 				}
