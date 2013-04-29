@@ -112,7 +112,7 @@ var PixelUtil = (function() {
 					offset += 12 + (src[offset]<<24) + (src[offset+1]<<16) + (src[offset+2]<<8) + (src[offset+3]);
 				}
 			} else {
-				throw "Png file is not a indexed image.: " + this.url;
+				return [];
 			}
 			this.colorDepth = colorDepth;
 			return getPaletteFromSource(src, colorDepth, offset);
@@ -158,10 +158,10 @@ var PixelUtil = (function() {
 							}
 							offset += 1;
 						} else {
-							throw "Unsupported GIF file.: " + this.url;
+						return [];
 						}
 					} else {
-						throw "Unsupported GIF file.: " + this.url;
+						return [];
 					}
 				}
 			}
@@ -220,7 +220,7 @@ var PixelUtil = (function() {
 					"<span class='height'>" + imgInfo.height     + "</span>" +
 					"<span class='size'>"   + imgInfo.fileSize   + "</span>" +
 					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>"))
-				.append(createPaletteTable(imgInfo.palette, $colorDiv))
+				.append(createPaletteTable.apply(this, [imgInfo.palette, $colorDiv]))
 				.append($colorDiv).hide().appendTo($tip);
 			$img.mouseover(function() {
 				var pos = $img.offset();
@@ -241,6 +241,7 @@ var PixelUtil = (function() {
 		};
 
 		var createPaletteTable = function(palette, $colorDiv) {
+			var that = this;
 			var $table = $("<table class='palette'></table>");
 			for (var y = 0; y < 16; y++) {
 				var $tr = $("<tr></tr>");
@@ -251,6 +252,7 @@ var PixelUtil = (function() {
 						$("<td></td>")
 							.css({ "background-color":color })
 							.mouseover(function() { $colorDiv.text(color).css({ "border-color":color }); })
+							.click(function() { that.bgcolor = -1; that.$img.css("background-color", color); })
 							.appendTo($tr);
 					})();
 				}
