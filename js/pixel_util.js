@@ -8,24 +8,32 @@ var PixelUtil = (function() {
 	 */
 	var PixelImage = function() {
 		var PixelImage = function(url, byteData) {
-			this.url = url;
+			this.url  = url;
 			this.name = url.split('/').pop();
 			this.byteData = byteData;
 			this.palette = null;
 			this.colorDepth = 0;
+
+			// Set propaties from private methods.
+			this.isGif    = isGif.apply(this);
+			this.isPng    = isPng.apply(this);
+			this.fileSize = getFileSize.apply(this);
+			this.width    = getWidth.apply(this);
+			this.height   = getHeight.apply(this);
+			this.palette  = getPalette.apply(this);
 		};
 		
 		/**
 		 * Return the byte size of image.
 		 */
-		PixelImage.prototype.getFileSize = function() {
+		var getFileSize = function() {
 			return this.byteData.length;
 		};
 
 		/**
 		 * Return true when image is png otherwise false.
 		 */
-		PixelImage.prototype.isPng = function() {
+		var isPng = function() {
 			var src = this.byteData;
 			return (src.length > 24)
 				&& src[0]===0x89 && src[1]===0x50 && src[2]===0x4E && src[3]===0x47
@@ -35,7 +43,7 @@ var PixelUtil = (function() {
 		/**
 		 * Return true when image is git otherwise false.
 		 */
-		PixelImage.prototype.isGif = function() {
+		var isGif = function() {
 			var src = this.byteData;
 			return src.length > 22 && src[0]===0x47 && src[1]===0x49 && src[2]===0x46;
 		};
@@ -43,15 +51,15 @@ var PixelUtil = (function() {
 		/**
 		 * Get the width of image.
 		 */
-		PixelImage.prototype.getWidth = function() {
+		var getWidth = function() {
 			var src = this.byteData;
 			var width = 0;
-			if (this.isPng()) {
+			if (isPng.apply(this)) {
 				width += src[16] << 24;
 				width += src[17] << 16;
 				width += src[18] << 8;
 				width += src[19];
-			} else if (this.isGif()) {
+			} else if (isGif.apply(this)) {
 				width += src[7] << 8;
 				width += src[6];
 			}
@@ -61,15 +69,15 @@ var PixelUtil = (function() {
 		/**
 		 * Get the height of image.
 		 */
-		PixelImage.prototype.getHeight = function() {
+		var getHeight = function() {
 			var src = this.byteData;
 			var height = 0;
-			if (this.isPng()) {
+			if (isPng.apply(this)) {
 				height += src[20] << 24;
 				height += src[21] << 16;
 				height += src[22] << 8;
 				height += src[23];
-			} else if (this.isGif()) {
+			} else if (isGif.apply(this)) {
 				height += src[9] << 8;
 				height += src[8];
 			}
@@ -172,15 +180,15 @@ var PixelUtil = (function() {
 		/**
 		 * Get the palette array of image.
 		 */
-		PixelImage.prototype.getPalette = function() {
+		var getPalette = function() {
 			// momerize
 			if (this.palette !== null) {
 				return this.palette;
 			}
-			if (this.isPng()) {
-				return getPngPalette.apply(this, []);
-			} else if (this.isGif()) {
-				return getGifPalette.apply(this, []);
+			if (isPng.apply(this)) {
+				return getPngPalette.apply(this);
+			} else if (isGif.apply(this)) {
+				return getGifPalette.apply(this);
 			}
 			throw "File is not PNG or GIF.: " + this.url;
 		};
@@ -192,59 +200,55 @@ var PixelUtil = (function() {
 	 * A tip class
 	 */
 	var PixelTip =  function() {
-		var $tip = undefined;
-		var PixelTip = function($img, imgInfo) {
-			var that = this;
-			this.$img = $("<img src='" + $img.attr('src') + "'>")
-				.css({ "background-color":bgcolors[0] });
+		var PixelTip = function($img) {
+			this.url = $img.attr("src");
 			this.bgcolor = 0;
 			this.zoomLevel = 1;
-			this.baseWidth  = $img.attr("width");
-			this.baseHeight = $img.attr("height");
-
-			var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
-			$('<button class="zoomIn" type="button">zoomIn</button>')
-				.click( function() { zoomIn.apply(that) } ).appendTo($controll);
-			$('<button class="zoomOut" type="button">zoomOut</button>')
-				.click( function() { zoomOut.apply(that) } ).appendTo($controll);
-			$('<button class="bgColor" type="button">bgColor</button>')
-				.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
-
-			var $colorDiv = $('<div class="color">#000000</div>');
-			!$tip && initializeTip();
-			var parts = $("<div></div>")
-				.append($controll) 
-				.append($('<div class="container"></div>').append(this.$img))
-				.append($("<div class='info'>" +
-					"<span class='width'>"  + imgInfo.width      + "</span>" +
-					"<span class='height'>" + imgInfo.height     + "</span>" +
-					"<span class='size'>"   + imgInfo.fileSize   + "</span>" +
-					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>")).hide().appendTo($tip);;
-			var $table = createPaletteTable.apply(this, [imgInfo.palette, $colorDiv]);
-			$table.children().size() && parts
-				.append($table)
-				.append($colorDiv);
-				
-			$img.mouseover(function() {
-				var pos = $img.offset();
-				$tip.children().hide();
-				parts.show();
-				$tip
-					.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" })
-					.show();
-			} );
 		};
 
-		var initializeTip = function() {
-			$tip = $("<div class='pixelTip'></div>")
-				.hide()
-				.hover(null, function() { $tip.hide(); } )
-				.mouseleave(function() { $tip.hide(); } )
-				.appendTo(document.body);
-		};
-
-		var createPaletteTable = function(palette, $colorDiv) {
+		var createTip = function(x, y) {
 			var that = this;
+			PixelUtil.load(that.url, function(imgInfo) {
+				var $tip = $("<div class='pixelTip'></div>")
+					.css({ position:"absolute" })
+					.hide()
+					.hover(null, function() { $tip.hide(); } )
+					.appendTo(document.body);
+				
+				var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
+				$('<button class="zoomIn" type="button">zoomIn</button>')
+					.click( function() { zoomIn.apply(that) } ).appendTo($controll);
+				$('<button class="zoomOut" type="button">zoomOut</button>')
+					.click( function() { zoomOut.apply(that) } ).appendTo($controll);
+				$('<button class="bgColor" type="button">bgColor</button>')
+					.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
+
+				var $img = $("<img src='" + that.url + "'>")
+					.css({ "background-color": bgcolors[0] });
+
+				$tip.append($controll)
+					.append($('<div class="container"></div>').append($img))
+					.append($("<div class='info'>" +
+						"<span class='width'>" + imgInfo.width + "</span>" +
+						"<span class='height'>" + imgInfo.height + "</span>" +
+						"<span class='size'>" + imgInfo.fileSize + "</span>" +
+						"<span class='depth'>" + imgInfo.colorDepth + "</span></div>"));
+				appendPaletteTable.apply(that, [$tip, imgInfo.palette]);
+
+				that.$tip = $tip;
+				that.$img = $img;
+				that.baseWidth  = $img.attr("width")  || imgInfo.width;
+				that.baseHeight = $img.attr("height") || imgInfo.height;
+				that.show(x, y);
+			});
+		};
+
+		var appendPaletteTable = function($tip, palette) {
+			if (palette.length === 0) {
+				return;
+			}
+			var that = this;
+			var $colorDiv = $('<div class="color">#000000</div>');
 			var $table = $("<table class='palette'></table>");
 			for (var y = 0; y < 16; y++) {
 				var $tr = $("<tr></tr>");
@@ -256,21 +260,26 @@ var PixelUtil = (function() {
 						}
 						var color = "#" + palette[offset];
 						$("<td></td>")
-							.css({ "background-color":color })
+							.css({ "background-color": color })
 							.mouseover(function() { $colorDiv.text(color).css({ "border-color":color }); })
-							.click(function() { that.bgcolor = -1; that.$img.css("background-color", color); })
+							.click(function() { that.changeBGColor(color); })
 							.appendTo($tr);
 					})();
 				}
 				$tr.children().size() && $table.append($tr);
 			}
-			return $table;
+			$tip.append($table).append($colorDiv);
 		};
 
 		var bgcolors = ["#FFF", "#FCC", "#CFC", "#CCF", "#F33", "#3F3", "#33F", "#FF3", "#3FF", "#F3F", "#000"];
-		var changeBGColor = function() {
-			this.bgcolor = this.bgcolor >= bgcolors.length-1 ? 0 : this.bgcolor+1;
-			this.$img.css("background-color", bgcolors[this.bgcolor]);
+		var changeBGColor = function(color) {
+			if (!color) {
+				this.bgcolor = this.bgcolor >= bgcolors.length-1 ? 0 : this.bgcolor+1;
+				color = bgcolors[this.bgcolor];
+			} else {
+				this.bgcolor = -1;
+			}
+			this.$img.css("background-color", color);
 		};
 
 		var zoomIn = function() {
@@ -284,7 +293,20 @@ var PixelUtil = (function() {
 		};
 
 		var fixSize = function() {
-			this.$img.css({ width: this.baseWidth*this.zoomLevel+"px", height: this.baseHeight*this.zoomLevel+"px" });
+			this.$img
+				.attr("width", this.baseWidth*this.zoomLevel+"px")
+				.attr("height", this.baseHeight*this.zoomLevel+"px");
+		};
+
+		PixelTip.prototype.show = function(x, y) {
+			if (!this.$tip) {
+				createTip.apply(this, [x, y]);
+			} else {
+				this.$tip.css({ "left":x+"px", "top":y+"px" }).show();
+			}
+		};
+		PixelTip.prototype.hide = function() {
+			this.$tip && this.$tip.hide();
 		};
 		return PixelTip;
 	}();
@@ -321,19 +343,7 @@ var PixelUtil = (function() {
 				throw "Couldn't load image: " + url;
 			}
 			var byteData = textToByteArray(request.responseText);
-			var img = new PixelImage(url, byteData);
-			// callback with informations of image.
-			callback({
-				url: url,
-				name: img.name,
-				fileSize:   img.getFileSize(),
-				width:      img.getWidth(),
-				height:     img.getHeight(),
-				isGif:      img.isGif(),
-				isPng:      img.isPng(),
-				palette:    img.getPalette(),
-				colorDepth: img.colorDepth
-			});
+			callback(new PixelImage(url, byteData));
 		};
 		request.send(null);
 	};
@@ -343,11 +353,8 @@ var PixelUtil = (function() {
 	 * When mouce hover to image, show a tip of image.
 	 * this method can't work without jQuery
 	 */
-	PixelUtil.createTip = function(img) {
-		var $img = $(img);
-		PixelUtil.load($img.attr('src'), function(imgInfo) {
-			new PixelTip($img, imgInfo);
-		});
+	PixelUtil.createTip = function($img) {
+		return new PixelTip($img);
 	};
 
 	return PixelUtil;
