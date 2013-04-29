@@ -221,11 +221,12 @@ var PixelUtil = (function() {
 					"<span class='size'>"   + imgInfo.fileSize   + "</span>" +
 					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>"))
 				.append(createPaletteTable(imgInfo.palette, $colorDiv))
-				.append($colorDiv);
+				.append($colorDiv).hide().appendTo($tip);
 			$img.mouseover(function() {
 				var pos = $img.offset();
-				$tip.children().remove();
-				$tip.append(parts)
+				$tip.children().hide();
+				parts.show();
+				$tip
 					.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" })
 					.show();
 			} );
