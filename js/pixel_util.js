@@ -262,7 +262,7 @@ var PixelUtil = (function() {
 						$("<td></td>")
 							.css({ "background-color": color })
 							.mouseover(function() { $colorDiv.text(color).css({ "border-color":color }); })
-							.click(function() { that.changeBGColor(color); })
+							.click(function() { changeBGColor.apply.(that, [color]); })
 							.appendTo($tr);
 					})();
 				}
