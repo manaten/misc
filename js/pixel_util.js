@@ -192,6 +192,7 @@ var PixelUtil = (function() {
 	 * A tip class
 	 */
 	var PixelTip =  function() {
+		var $tip = undefined;
 		var PixelTip = function($img, imgInfo) {
 			var that = this;
 			this.$img = $("<img src='" + $img.attr('src') + "'>")
@@ -203,34 +204,39 @@ var PixelUtil = (function() {
 
 			var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
 			$('<button class="zoomIn" type="button">zoomIn</button>')
-				.appendTo($controll)
-				.click( function() { zoomIn.apply(that) } );
+				.click( function() { zoomIn.apply(that) } ).appendTo($controll);
 			$('<button class="zoomOut" type="button">zoomOut</button>')
-				.appendTo($controll)
-				.click( function() { zoomOut.apply(that) } );
+				.click( function() { zoomOut.apply(that) } ).appendTo($controll);
 			$('<button class="bgColor" type="button">bgColor</button>')
-				.appendTo($controll)
-				.click( function() { changeBGColor.apply(that) } );
+				.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
 
 			var $colorDiv = $('<div class="color">#000000</div>');
-			var $tip = $("<div class='pixelTip'></div>")
-				.append($controll)
+			!$tip && initializeTip();
+			var parts = $("<div></div>")
+				.append($controll) 
 				.append($('<div class="container"></div>').append(this.$img))
-				.append("<div>" +
+				.append($("<div class='info'>" +
 					"<span class='width'>"  + imgInfo.width      + "</span>" +
 					"<span class='height'>" + imgInfo.height     + "</span>" +
 					"<span class='size'>"   + imgInfo.fileSize   + "</span>" +
-					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>")
-				.append( createPaletteTable(imgInfo.palette, $colorDiv) )
-				.append($colorDiv)
+					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>"))
+				.append(createPaletteTable(imgInfo.palette, $colorDiv))
+				.append($colorDiv);
+			$img.mouseover(function() {
+				var pos = $img.offset();
+				$tip.children().remove();
+				$tip.append(parts)
+					.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" })
+					.show();
+			} );
+		};
+
+		var initializeTip = function() {
+			$tip = $("<div class='pixelTip'></div>")
 				.hide()
 				.hover(null, function() { $tip.hide(); } )
 				.mouseleave(function() { $tip.hide(); } )
 				.appendTo(document.body);
-			$img.mouseover(function() {
-				var pos = $img.offset();
-				$tip.css({ position:"absolute", "left":pos.left-10+"px", "top":pos.top-10+"px" }).show();
-			} );
 		};
 
 		var createPaletteTable = function(palette, $colorDiv) {
