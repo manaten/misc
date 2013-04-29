@@ -213,7 +213,7 @@ var PixelUtil = (function() {
 				var $tip = $("<div class='pixelTip'></div>")
 					.css({ position:"absolute" })
 					.hide()
-					.hover(null, function() { $tip.hide(); } )
+					.hover(null, function() { that.hide(); } )
 					.appendTo(document.body);
 				
 				var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
