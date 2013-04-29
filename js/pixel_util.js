@@ -83,7 +83,7 @@ var PixelUtil = (function() {
 		var getPaletteFromSource = function(src, colorDepth, offset) {
 			var size = Math.pow(2, colorDepth);
 			if (offset + size * 3 > src.length) {
-				throw "Illigal image file.: " + this.url;
+				return [];
 			}
 			var palette = new Array(size);
 			for(var i = 0; i < size; i++) {
@@ -219,9 +219,12 @@ var PixelUtil = (function() {
 					"<span class='width'>"  + imgInfo.width      + "</span>" +
 					"<span class='height'>" + imgInfo.height     + "</span>" +
 					"<span class='size'>"   + imgInfo.fileSize   + "</span>" +
-					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>"))
-				.append(createPaletteTable.apply(this, [imgInfo.palette, $colorDiv]))
-				.append($colorDiv).hide().appendTo($tip);
+					"<span class='depth'>"  + imgInfo.colorDepth + "</span></div>")).hide().appendTo($tip);;
+			var $table = createPaletteTable.apply(this, [imgInfo.palette, $colorDiv]);
+			$table.children().size() && parts
+				.append($table)
+				.append($colorDiv);
+				
 			$img.mouseover(function() {
 				var pos = $img.offset();
 				$tip.children().hide();
@@ -259,7 +262,7 @@ var PixelUtil = (function() {
 							.appendTo($tr);
 					})();
 				}
-				$tr.size() && $table.append($tr);
+				$tr.children().size() && $table.append($tr);
 			}
 			return $table;
 		};
