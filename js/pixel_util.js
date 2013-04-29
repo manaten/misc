@@ -204,6 +204,7 @@ var PixelUtil = (function() {
 			this.url = $img.attr("src");
 			this.bgcolor = 0;
 			this.zoomLevel = 1;
+			this.visible = false;
 		};
 
 		var createTip = function(x, y) {
@@ -239,7 +240,7 @@ var PixelUtil = (function() {
 				that.$img = $img;
 				that.baseWidth  = $img.attr("width")  || imgInfo.width;
 				that.baseHeight = $img.attr("height") || imgInfo.height;
-				that.show(x, y);
+				that.visible && that.show(x, y);
 			});
 		};
 
@@ -299,6 +300,7 @@ var PixelUtil = (function() {
 		};
 
 		PixelTip.prototype.show = function(x, y) {
+			this.visible = true;
 			if (!this.$tip) {
 				createTip.apply(this, [x, y]);
 			} else {
@@ -306,6 +308,7 @@ var PixelUtil = (function() {
 			}
 		};
 		PixelTip.prototype.hide = function() {
+			this.visible = false;
 			this.$tip && this.$tip.hide();
 		};
 		return PixelTip;
