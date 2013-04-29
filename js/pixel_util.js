@@ -304,12 +304,13 @@ var PixelUtil = (function() {
 			if (!this.$tip) {
 				createTip.apply(this, [x, y]);
 			} else {
-				this.$tip.css({ "left":x+"px", "top":y+"px" }).show();
+				this.$tip.css({ "left":x+"px", "top":y+"px" }).hide().show();
 			}
 		};
 		PixelTip.prototype.hide = function() {
 			this.visible = false;
-			this.$tip && this.$tip.hide();
+			this.$tip && this.$tip.show().hide();
+			console.log(this.url);
 		};
 		return PixelTip;
 	}();
