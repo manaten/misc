@@ -4,8 +4,8 @@
 // @description 特定のページで画像にドット絵向けTipを表示します。
 // @include     http://www.pixeljoint.com/*
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
-// @require     https://raw.github.com/manaten/misc/master/js/pixel_util.js
-// @resource    PixelTip https://raw.github.com/manaten/misc/master/css/pixel_tip.css
+// @require     https://raw.github.com/manaten/misc/master/pixel_util/pixel_util.js
+// @resource    PixelTip https://raw.github.com/manaten/misc/master/pixel_util/pixel_tip.css
 // @version     1
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
