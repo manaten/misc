@@ -25,7 +25,7 @@ var PixelUtil = (function() {
 		};
 
 		var unique = function(array) {
-			var _a = array.sort();
+			var _a = array.slice(0).sort();
 			var result = [];
 			for (var i = 0; i < _a.length; i++) {
 				if (_a[i-1]) {
