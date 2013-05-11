@@ -218,6 +218,9 @@ var PixelUtil = (function() {
 			this.url = url;
 			this.bgcolor = 0;
 			this.zoomLevel = 1;
+			this.rotate = 0;
+			this.flipX = false;
+			this.flipY = false;
 			this.visible = false;
 		};
 
@@ -236,13 +239,17 @@ var PixelUtil = (function() {
 			PixelUtil.load(that.url, function(imgInfo) {
 				var $controll = $("<div class='controll'>" + imgInfo.name + "</div>");
 				$('<button class="zoomIn" type="button">+</button>')
-					.click( function() { zoomIn.apply(that) } ).appendTo($controll);
+					.click( function() { zoomIn.apply(that); } ).appendTo($controll);
 				$('<button class="zoomOut" type="button">-</button>')
-					.click( function() { zoomOut.apply(that) } ).appendTo($controll);
+					.click( function() { zoomOut.apply(that); } ).appendTo($controll);
 				$('<button class="bgColor" type="button">[ ]</button>')
-					.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
-				$('<button class="flip" type="button">&lt;-&gt;</button>')
-					.click( function() { flipImage.apply(that) } ).appendTo($controll);
+					.click( function() { changeBGColor.apply(that); } ).appendTo($controll);
+				$('<button class="flipX" type="button">↔</button>')
+					.click( function() { flipX.apply(that); } ).appendTo($controll);
+				$('<button class="flipY" type="button">↕</button>')
+					.click( function() { flipY.apply(that); } ).appendTo($controll);
+				$('<button class="rotate" type="button">↻</button>')
+					.click( function() { rotate.apply(that); } ).appendTo($controll);
 
 
 				$tip.append($controll)
@@ -316,8 +323,27 @@ var PixelUtil = (function() {
 				.attr("height", this.baseHeight*this.zoomLevel+"px");
 		};
 
-		var flipImage = function() {
-			this.$img.toggleClass("flip");
+		var flipX = function() {
+			this.flipX = !this.flipX;
+			setTransform.apply(this); 
+		};
+
+		var flipY = function() {
+			this.flipY = !this.flipY;
+			setTransform.apply(this); 
+		};
+
+		var rotate = function() {
+			this.rotate = this.rotate >=3 ? 0 : this.rotate + 1;
+			setTransform.apply(this); 
+		};
+
+		var setTransform = function() {
+			var transform = '';
+			this.rotate !== 0 && (transform += ' rotateZ(' + (this.rotate * 90) + 'deg)');
+			this.flipX && (transform += ' rotateY(180deg)');
+			this.flipY && (transform += ' rotateX(180deg)');
+			this.$img.css({'transform': transform});
 		};
 
 		PixelTip.prototype.show = function(x, y) {
