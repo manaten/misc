@@ -227,6 +227,8 @@ var PixelUtil = (function() {
 					.click( function() { zoomOut.apply(that) } ).appendTo($controll);
 				$('<button class="bgColor" type="button">[ ]</button>')
 					.click( function() { changeBGColor.apply(that) } ).appendTo($controll);
+				$('<button class="flip" type="button">&lt;-&gt;</button>')
+					.click( function() { flipImage.apply(that) } ).appendTo($controll);
 
 
 				$tip.append($controll)
@@ -297,6 +299,10 @@ var PixelUtil = (function() {
 			this.$img
 				.attr("width", this.baseWidth*this.zoomLevel+"px")
 				.attr("height", this.baseHeight*this.zoomLevel+"px");
+		};
+
+		var flipImage = function() {
+			this.$img.toggleClass("flip");
 		};
 
 		PixelTip.prototype.show = function(x, y) {

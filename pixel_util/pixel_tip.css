@@ -13,3 +13,4 @@ div.pixelTip div.container img { image-rendering: -moz-crisp-edges; image-render
 div.pixelTip table.palette { margin: 0 auto; }
 div.pixelTip table.palette td { width: 10px; height: 9px; border: solid 1px #EEE; }
 div.pixelTip div.color { width: 50px; padding: 2px; margin: 0 auto; border-left: 16px solid #000; }
+div.pixelTip img.flip { -webkit-transform: scaleX(-1); -o-transform: scaleX(-1); -moz-transform: scaleX(-1); transform: scaleX(-1); filter: FlipH; -ms-filter: "FlipH"; }
