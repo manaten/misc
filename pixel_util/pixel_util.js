@@ -21,7 +21,7 @@ var PixelUtil = (function() {
 			this.width    = getWidth.apply(this);
 			this.height   = getHeight.apply(this);
 			this.palette  = getPalette.apply(this);
-			this.colorNum = uniq(this.palette).length;
+			this.colorNum = unique(this.palette).length;
 		};
 
 		var unique = function(array) {
