@@ -21,6 +21,20 @@ var PixelUtil = (function() {
 			this.width    = getWidth.apply(this);
 			this.height   = getHeight.apply(this);
 			this.palette  = getPalette.apply(this);
+			this.colorNum = uniq(this.palette).length;
+		};
+
+		var unique = function(array) {
+			var _a = array.sort();
+			var result = [];
+			for (var i = 0; i < _a.length; i++) {
+				if (_a[i-1]) {
+					(_a[i-1] !== _a[i]) && result.push(_a[i]);
+				} else {
+					result.push(_a[i]);
+				}
+			}
+			return result;
 		};
 		
 		/**
@@ -237,6 +251,7 @@ var PixelUtil = (function() {
 						"<span class='width'>" + imgInfo.width + "</span>" +
 						"<span class='height'>" + imgInfo.height + "</span>" +
 						"<span class='size'>" + imgInfo.fileSize + "</span>" +
+						"<span class='colorNum'>" + imgInfo.colorNum + "</span>" +
 						"<span class='depth'>" + imgInfo.colorDepth + "</span></div>"));
 				appendPaletteTable.apply(that, [$tip, imgInfo.palette]);
 
