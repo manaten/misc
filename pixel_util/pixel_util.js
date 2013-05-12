@@ -264,6 +264,7 @@ var PixelUtil = (function() {
 
 				that.baseWidth  = $img.attr("width")  || imgInfo.width;
 				that.baseHeight = $img.attr("height") || imgInfo.height;
+				setStyles.apply(that); 
 				that.visible && that.show(x, y);
 			});
 		};
@@ -321,29 +322,39 @@ var PixelUtil = (function() {
 			this.$img
 				.attr("width", this.baseWidth*this.zoomLevel+"px")
 				.attr("height", this.baseHeight*this.zoomLevel+"px");
+			setStyles.apply(this); 
 		};
 
 		var flipX = function() {
 			this.flipX = !this.flipX;
-			setTransform.apply(this); 
+			setStyles.apply(this); 
 		};
 
 		var flipY = function() {
 			this.flipY = !this.flipY;
-			setTransform.apply(this); 
+			setStyles.apply(this); 
 		};
 
 		var rotate = function() {
 			this.rotate = this.rotate >=3 ? 0 : this.rotate + 1;
-			setTransform.apply(this); 
+			setStyles.apply(this); 
 		};
 
-		var setTransform = function() {
+		var setStyles = function() {
+			var offset = (this.baseWidth-this.baseHeight)*this.zoomLevel/2;
 			var transform = '';
-			this.rotate !== 0 && (transform += ' rotateZ(' + (this.rotate * 90) + 'deg)');
+			this.rotate !== 0 && (transform += ' rotate(' + (this.rotate * 90) + 'deg)');
+			this.rotate === 1 && (transform += ' translate('+offset+'px, 0px)');
+			this.rotate === 3 && (transform += ' translate('+-offset+'px, 0px)');
+
 			this.flipX && (transform += ' rotateY(180deg)');
 			this.flipY && (transform += ' rotateX(180deg)');
 			this.$img.css({'transform': transform});
+
+			this.$img.parent().css({
+				"width":  this[this.rotate%2==1 ? "baseHeight" : "baseWidth"]*this.zoomLevel+"px",
+				"height": this[this.rotate%2==1 ? "baseWidth" : "baseHeight"]*this.zoomLevel+"px"
+			});
 		};
 
 		PixelTip.prototype.show = function(x, y) {
