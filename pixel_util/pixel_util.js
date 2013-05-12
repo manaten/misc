@@ -351,9 +351,11 @@ var PixelUtil = (function() {
 			this.flipY && (transform += ' rotateX(180deg)');
 			this.$img.css({'transform': transform});
 
+			var width  = this.rotate%2==1 ? Math.max(this.baseHeight, this.baseWidth) : this.baseWidth;
+			var height = this[this.rotate%2==1 ? "baseWidth" : "baseHeight"];
 			this.$img.parent().css({
-				"width":  this[this.rotate%2==1 ? "baseHeight" : "baseWidth"]*this.zoomLevel+"px",
-				"height": this[this.rotate%2==1 ? "baseWidth" : "baseHeight"]*this.zoomLevel+"px"
+				"width":  width*this.zoomLevel+"px",
+				"height": height*this.zoomLevel+"px"
 			});
 		};
 
